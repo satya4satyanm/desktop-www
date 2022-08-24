@@ -1,0 +1,19 @@
+h1. Assembla.readme
+
+In assembla you can use "textile(Textile Basics)":http://bit.ly/textile-basics, "html(Html Basics)":http://bit.ly/html-basics or "markdown(Markdown Basics)":http://bit.ly/markdown-basics to add some sugar to your readme files. Just add the extention to your readme file, so we can recognize the markup you want to use!
+
+
+Saving positions:
+1. Create object structures
+2. Consider all options 
+3. save and load from ls
+4. Fix image loading
+5. Save piece location even if its not moved
+6. Store wip puzzles based on its name
+7. 
+
+make key=null if normal game play
+on inprogress game consider time limit or ellapsed
+
+free mode, join the pieces. onload make sure they are joined
+position mode, save after positioned. save game after piece positioned

@@ -1,0 +1,377 @@
+* {
+    padding: 0;
+    margin: 0;
+    overscroll-behavior: none;
+    font-family: "Lato", sans-serif;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+body{
+    background-color: rgb(65,0,0);
+    /* background-image: url("../images/wood3.jpg"); */
+}
+
+#game {
+    position: absolute;
+    transform-origin: 0 0;
+    width: 100%;
+    height: 100%;
+    background-repeat: repeat;
+    /* background-image: url("../images/wood.jpg"); */
+    z-index: 0;
+    background-color: rgba(65, 0, 0, 1);
+}
+
+#size {
+    text-align: center;
+    overflow-x: hidden !important;
+}
+
+#size ul {
+    width: 96%;
+}
+
+#size ul li {
+    margin: 0 0 10px 0;
+    padding: 12px;
+    color: #000;
+    font-size: 25px;
+}
+
+#gallery {
+    text-align: left;
+}
+
+#category {
+    padding-right: 20px;
+    box-sizing: border-box;
+    width: calc(100% - 90px);
+    height: calc(100% - 125px);
+    text-align: left;
+}
+
+#category ul li .img {
+    width: 250px;
+    height: 188px;
+    background: #fff;
+    box-shadow: 0 0 20px #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#category ul li .img img {
+    max-width: 250px;
+    max-height: 188px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0 0 0 20px;
+}
+
+li {
+    margin-top: -1px;
+    display: inline-block;
+    text-align: center;
+    font-family: "Segoe UI", Helvetica, Arial;
+    font-size: 20px;
+    color: #ffffff;
+    margin: 0 30px 30px 0;
+    line-height: 27px;
+}
+
+li.list {
+    border: 1px solid #ddd;
+    padding: 10px;
+    background-color: #f6f6f6;
+    width: 100%;
+}
+
+.wrap {
+    overflow: visible;
+    padding-top: 20px;
+    margin-left: 20px;
+}
+
+.cat-name {
+    font-size: 24px !important;
+}
+
+.box {
+    display: inline-block;
+    position: relative;
+    width: 250px;
+    height: 225px;
+    font-family: "Segoe UI", Helvetica, Arial;
+    font-size: 20px;
+    color: #ffffff;
+    margin: 0 30px 30px 0;
+}
+
+.boxInner {
+    text-align: center;
+    color: #ffffff;
+    line-height: 26px;
+}
+
+.boxInner .img {
+    max-width: 250px;
+    height: 188px;
+    box-sizing: border-box;
+    background-color: #fff;
+    box-shadow: 0 0 20px #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.boxInner .img img {
+    max-width: 100%;
+    max-height: 188px;
+}
+
+#file-input {
+    display: none;
+}
+
+
+#cNameContainer {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#cNameContainer .difficulty {
+    width: 750px;
+    height: 520px;
+    margin: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    overflow: hidden;
+}
+
+
+#cNameContainer .difficulty #imgHolder {
+    text-align: center;
+    height: 470px;
+    display:-ms-flexbox;
+    overflow: hidden;
+-ms-flex-pack:center;
+-ms-flex-align:center;
+
+/* Firefox */
+display:-moz-box;
+-moz-box-pack:center;
+-moz-box-align:center;
+
+/* Safari, Opera, and Chrome */
+display:-webkit-box;
+-webkit-box-pack:center;
+-webkit-box-align:center;
+
+/* W3C */
+display:box;
+box-pack:center;
+box-align:center;
+}
+
+
+
+#cNameContainer .difficulty #imgHolder img {
+    width: auto;
+    height: auto;
+    max-height: 470px;
+    max-width: 750px;
+}
+
+#cNameContainer #cfooter {
+    color: #fff;
+    font-size: 22px;
+    vertical-align: middle;
+    margin-top: 15px;
+}
+
+
+#cNameContainer #cfooter .buttons{
+    float: right;
+    font-size: 22px;
+    margin-top: 1px;
+}
+#cNameContainer #cfooter input{
+    font-size: 20px;
+    width: 300px;
+    height: 35px;
+    padding: 0 6px;
+    box-sizing: border-box;
+}
+
+#cNameContainer #cfooter .buttons .button{
+    font-size: 20px;
+    width: 100px;
+    height: 34px;
+    text-align: center;
+    background: #ccc;
+    color: #000;
+    margin: 0 0 0 10px;
+    line-height: 30px;
+    padding: 3px 0;
+    box-sizing: border-box;
+}
+
+#cNameContainer #cfooter .buttons .button#cOkBtn{
+    background-color: #189922;
+    color: #ffffff;
+    width: 120px;
+}
+
+#cNameContainer #cfooter span{
+    display: inline-block;
+    margin-right: 10px;
+    vertical-align: top;
+}
+
+#cNameContainer #cfooter span:first-child {
+    margin-top: 8px;
+}
+
+#difficultyContainer {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#difficultyContainer .difficulty {
+    width: 750px;
+    height: 590px;
+    margin: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    overflow: hidden;
+}
+
+#difficultyContainer .difficulty .head {
+    background-color: #ffffff;
+    color: #000000;
+    padding: 5px;
+    font-size: 20px;
+}
+
+#difficultyContainer .difficulty #imgHolder {
+    background-color: #ffffff;
+    text-align: center;
+    height: 472px;
+    display:-ms-flexbox;
+-ms-flex-pack:center;
+-ms-flex-align:center;
+
+/* Firefox */
+display:-moz-box;
+-moz-box-pack:center;
+-moz-box-align:center;
+
+/* Safari, Opera, and Chrome */
+display:-webkit-box;
+-webkit-box-pack:center;
+-webkit-box-align:baseline;
+
+/* W3C */
+display:box;
+box-pack:center;
+box-align:center;
+overflow: hidden;
+}
+
+
+
+#difficultyContainer .difficulty #imgHolder img {
+    width: auto;
+    height: auto;
+    max-height: 553px;
+    max-width: 750px;
+}
+
+#difficultyContainer .difficulty #footer {
+    background-color: rgba(0, 0, 0, 0.8);
+    position: absolute;
+    border-top: 2px solid rgba(255, 255, 255, 0.3);
+    bottom: 0;
+    width: 100%;
+    height: 84px;
+    z-index: 3;
+}
+
+#difficultyContainer .difficulty #footer .num {
+    color: #ffffff;
+    font-size: 28px;
+}
+
+#difficultyContainer .difficulty #footer .txt {
+    color: #ffffff;
+    font-size: 16px;
+}
+
+#difficultyContainer .difficulty #footer .dif {
+    position: relative;
+    display: inline-block;
+    padding: 5px;
+    background: rgba(0, 0, 0, 0.5);
+    width: 15.067%;
+    height: 74px;
+    float: left;
+    text-align: center;
+    color: #ffffff;
+    font-weight: bold;
+    border-left: 2px solid rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+}
+
+#difficultyContainer .difficulty #footer .dif:first-child {
+    border-left: 0;
+}
+
+#difficultyContainer .difficulty #footer .dif img {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.caption {
+    width: 222px;
+    height: 30px;
+    line-height: 32px;
+    margin: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.delete-option {
+    position: absolute;
+    border: 1px solid red;
+    padding: 20px;
+    background-color: #ffffff;
+    z-index: 9999;
+    box-shadow: 0 0 2px;
+}
+
+@media screen and (max-width: 768px) {
+    #btnBack {
+        right: 91% !important;
+    }
+}
+
+@media screen and (max-width: 360px) {
+    #btnBack {
+        right: 87% !important;
+    }
+}

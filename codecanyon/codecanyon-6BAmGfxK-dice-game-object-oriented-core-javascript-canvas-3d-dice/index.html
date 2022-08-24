@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <style>
+      body {
+        margin: 0px;
+        padding: 0px;
+		background-color: black;
+		text-align: center;
+      }
+
+	  canvas {
+		  position: relative !important;
+	  }
+    </style>
+	<!--[if lt IE 9]><script type="text/javascript" src="js/flashcanvas.js"></script><![endif]-->
+  </head>
+  <body>
+    <!--canvas id="myCanvas" width="640" height="480"></canvas-->
+    
+	<script src="js/Sounds.js"></script>
+	<script src="js/CoinFall.js"></script>
+	<script src="js/GameEngine.js"></script>
+	<script src="js/GameUI.js"></script>
+	<script src="js/Game.js"></script>
+	<script src="js/Dice.js"></script>
+	<script src="js/StateMachine.js"></script>
+	<script>
+	window.onload=function(){
+		(function() {
+		var canvas = document.createElement('canvas');
+
+		canvas.id = "myCanvas";
+		canvas.width = 640;
+		canvas.height = 480;
+		canvas.style.position = "absolute";
+		canvas.style.border = "1px solid";
+
+
+		var body = document.getElementsByTagName("body")[0];
+		body.appendChild(canvas);
+
+			//var canvas = document.getElementById('myCanvas');
+			var context = canvas.getContext('2d');
+			//requestAnimationFrame does not work in Safari for windows. Please use polyfills if needed.
+			var requestAnimationFrame = window.requestAnimationFrame || 
+										window.mozRequestAnimationFrame ||
+										window.webkitRequestAnimationFrame ||
+										window.msRequestAnimationFrame;
+			var G = new Game(canvas, 1);
+		})();
+	}
+		
+    </script>
+  </body>
+</html>
+      

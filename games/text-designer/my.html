@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en" class=""><head>
+
+<meta charset="UTF-8"><meta name="robots" content="noindex">
+
+    <style class="cp-pen-styles"></style></head><body>
+    <div id="game-container"></div>
+    <script src="libs/3.23.0.js"></script>
+    <script id="rendered-js">
+              var config = {
+      type: Phaser.AUTO,
+      width: 800,
+      height: 600,
+      parent: 'phaser-example',
+      backgroundColor: '#fff',
+      scene: {
+        preload: preload,
+        create: create,
+        update: update } };
+    
+    
+    
+    var text1;
+    var text2;
+    var text3;
+    var graphics;
+    
+    var text11;
+    var text21;
+    
+    
+    
+    var game = new Phaser.Game(config);
+    
+    
+    function preload() {
+      this.load.image('p', 's.jpg');
+    
+    }
+    
+    
+    function create()
+    {
+
+        var content = [
+        "The sky above the port was the color of television, tuned to a dead channel.",
+        "`It's not like I'm using,' Case heard someone say, as he shouldered his way ",
+        "through the crowd around the door of the Chat. `It's like my body's developed",
+        "this massive drug deficiency.' It was a Sprawl voice and a Sprawl joke.",
+        "The Chatsubo was a bar for professional expatriates; you could drink there for",
+        "a week and never hear two words in Japanese.",
+        "",
+        "Ratz was tending bar, his prosthetic arm jerking monotonously as he filled a tray",
+        "of glasses with draft Kirin. He saw Case and smiled, his teeth a webwork of",
+        "East European steel and brown decay. Case found a place at the bar, between the",
+        "unlikely tan on one of Lonny Zone's whores and the crisp naval uniform of a tall",
+        "African whose cheekbones were ridged with precise rows of tribal scars. `Wage was",
+        "in here early, with two joeboys,' Ratz said, shoving a draft across the bar with",
+        "his good hand. `Maybe some business with you, Case?'",
+        "",
+        "Case shrugged. The girl to his right giggled and nudged him.",
+        "The bartender's smile widened. His ugliness was the stuff of legend. In an age of",
+        "affordable beauty, there was something heraldic about his lack of it. The antique",
+        "arm whined as he reached for another mug.",
+        "",
+        "",
+        "From Neuromancer by William Gibson"
+    ];
+
+
+        for(var i=0; i<content.length; ++i) {
+            this.add.text(100, 100 + i * 15, content[i]).setTint(0x33FFFF, 0x33FFFF, 0xFF00FF, 0xFF00FF);
+        }
+
+
+     // text1 = this.add.text(100, 100, content);
+      //text1.setTint(0xffffff, 0xffffff, 0x33FFFF, 0x33FFFF);
+
+      document.querySelector('body').click = function() {
+          alert(this);
+      };
+    
+      text2 = this.add.text(100, 200, 'Two', { backgroundColor: 'rgba(10,20,30,0.9)', fontStyle: 'bold italic', fontFamily: 'Arial', fontSize: 64, color: '#00ff00', padding: 10 });
+      //this.add.text(100, 100, 'Phaser').setFontSize(64).setFontStyle('bold italic').setFontFamily('Arial').setBackgroundColor('#0000ff');
+      text3 = this.add.text(100, 400, 'Three', { fontFamily: "Arial Black", fontSize: 74, color: "#c51b7d", padding: 16 });
+      text3.setStroke('#de77ae', 16).setShadow(2, 2, "#333333", 2, true, true);
+    
+      graphics = this.add.graphics();
+    
+      var tt = this.add.text(420, 180, "Shadow Fill", { fontFamily: "Arial Black", fontSize: 74, color: "#552b00" });
+      tt.setStroke('rgba(f,f,f,0.5)', 8);
+    
+      //  Apply the shadow to the Fill only
+      tt.setShadow(0, 0, "#7b3f00", 4, true, true);
+    
+    
+    
+      //  Rainbow Text
+      text11 = this.add.text(50, 100, 'Gredient Text', { font: "74px Arial Black", fill: "#fff" });
+      text11.setStroke('#00f', 5);
+      
+      text11.setShadow(2, 2, "#333333", 2, true, true);
+      text11.setTint(0x33FFFF, 0x33FFFF, 0xFF00FF, 0xFF00FF);
+    
+    
+    
+      var phaser211 = this.add.text(200, 300, 'Satya').setFont('72px Arial').setColor('#ffff00').setAlign('center').setFontStyle('bold');
+      phaser211.setOrigin(0.5);
+      phaser211.setStroke('rgba(f,f,f,0.5)', 8);
+      phaser211.setShadow(2, 2, "#7b3f00", 4, true, true);
+	  phaser211.setTint(0x33FFFF, 0x33FFFF, 0xFF00FF, 0xFF00FF);
+    
+      var bunny = this.add.image(200, 300, 'p').setScale(0.3);
+    
+      var phaser21 = this.add.text(200, 300, 'Satya').setFont('72px Arial').setColor('#ff0000').setAlign('center').setFontStyle('bold');
+      phaser21.setOrigin(0.5);
+      phaser21.visible = false;
+      var i = 0;
+      this.input.addPointer();
+      this.input.on('pointerdown', function (pointer) {
+        var text = 'Satya' + i;
+        phaser211.setText(text);
+        phaser21.setText(text);
+        i++;
+      }, this);
+    
+      bunny.mask = new Phaser.Display.Masks.BitmapMask(this, phaser21);
+
+
+      graphics.lineStyle(1, 0xff0000, 1);
+    
+      //graphics.strokeRectShape(text1.getBounds());
+      graphics.strokeRectShape(text2.getBounds());
+      graphics.strokeRectShape(text3.getBounds());
+
+      // change game background color
+      this.cameras.main.backgroundColor.setTo(25,25,25);
+
+    }
+    
+    function update()
+    {
+    }
+    // https://labs.phaser.io/edit.html?src=src/game%20objects\bitmaptext\static\tinted%20text.js   bitmap text
+    
+    // https://labs.phaser.io/edit.html?src=src/game%20objects\text\static\custom%20webfont.js web fonts
+              //# sourceURL=pen.js
+            </script>
+
+
+1. load a background image
+2. allow transparent text
+3. Allow transparent background for text
+4. 
+
+            </body></html>

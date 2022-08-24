@@ -1,0 +1,353 @@
+body, html {
+	padding: 0px;
+	margin: 15px;
+	background: radial-gradient(circle, rgb(61, 111, 161) 20%, rgb(2, 19, 36) 80%);
+	overflow: hidden;
+	user-select: none;
+	font-family: cursive;
+}
+
+body {
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+div {
+	margin: 0px;
+	padding: 0px;
+}
+
+#bg {
+	background-color: black;
+	position: absolute;
+}
+
+#Carrom {
+	position: absolute;
+}
+
+#Striker {
+	position: relative;
+}
+
+.jumbotron {
+	position: absolute;
+	padding: 0px;
+	margin: 0px;
+	font-family: cursive;
+	z-index: 5;
+	pointer-events: none;
+	color: #fff;
+}
+
+.one {
+	top: 521px;
+	left: calc(50% - 82px);
+}
+
+.two {
+	top: 21px;
+	left: calc(50% - 82px);
+}
+
+.jumbotron h3, .jumbotron p {
+	margin: 4px;
+	cursor: default;
+	display: inline-block;
+}
+
+.title {
+	position: absolute;
+	left: 0;
+	top: 0;
+	background: #000;
+	color: #fff;
+	font-family: cursive;
+	padding: 0 40px;
+	height: 100%;
+	background: url(../blue-fire1.jpg) 70% 65% no-repeat;
+    background-size: 173% 100%;
+	text-shadow: 3px 3px #000000;
+}
+
+.title h1 {
+	font-size: 50px;
+	margin: 20px 0;
+}
+
+.controls {
+	position: absolute;
+	right: 0;
+	top: 0;
+	background: #000;
+	color: #fff;
+	font-family: cursive;
+	padding: 0 20px;
+	height: 100%;
+	text-align: center;
+}
+
+#gameConfig {
+	position: fixed;
+	top: 30px;
+	left: 120px;
+	width: 200px;
+	height: 520px;
+	overflow: hidden;
+	/* border: 2px solid red; */
+	color: #fff;
+	font-family: cursive;
+	padding: 0 20px;
+	text-align: center;
+}
+
+#msgs {
+	position: fixed;
+	top: 30px;
+	right: 120px;
+	width: 200px;
+	height: 200px;
+	overflow: hidden;
+	/* border: 2px solid red; */
+	color: #fff;
+	font-family: cursive;
+	padding: 0 20px;
+	text-align: center;
+}
+
+#msgs1 {
+	position: fixed;
+    top: 220px;
+    right: 120px;
+    width: 200px;
+    height: 328px;
+    overflow: hidden;
+    /* border: 2px solid red; */
+    color: #fff;
+    font-family: cursive;
+    padding: 0 20px;
+    text-align: center;
+}
+
+#msgs1 div ul{
+	text-align: left;
+	margin: 0;
+	padding: 0;
+}
+
+
+
+#gameConfig h3, #msgs h3 {
+	margin-top: 0;
+}
+
+div.b, div.g {
+	position: relative;
+	width: 35px;
+	height: 35px;
+	margin: 20px auto;
+}
+
+div.b.active,div.g.active  {
+	border: 2px solid red;
+    box-sizing: border-box;
+}
+
+div.b1 {
+	background-image: url('../b1.jpg');
+}
+
+div.b2 {
+	background-image: url('../b2.jpg');
+}
+
+div.b3 {
+	background-image: none;
+	background-color: #ebdfc3;
+}
+
+.s {
+	background-color: #ebdfc3;
+	width: 35px;
+	height: 35px;
+	margin: 20px auto;
+}
+
+.s img {
+	margin: 3px;
+}
+
+.g img {
+	margin-top: 2px;
+}
+
+.g.active img {
+	margin-top: 0;
+}
+
+.myButton {
+	box-shadow: inset 0px 1px 0px 0px #ffffff;
+	background: linear-gradient(to bottom, #ededed 5%, #dfdfdf 100%);
+	background-color: #ededed;
+	border-radius: 6px;
+	border: 1px solid #dcdcdc;
+	display: inline-block;
+	cursor: pointer;
+	color: #777777;
+	font-family: Arial;
+	font-size: 15px;
+	font-weight: bold;
+	padding: 10px 24px;
+	text-decoration: none;
+	text-shadow: 0px 1px 0px #ffffff;
+	margin: 15px auto;
+}
+
+.myButton:hover {
+	background: linear-gradient(to bottom, #dfdfdf 5%, #ededed 100%);
+	background-color: #dfdfdf;
+}
+
+.myButton:active {
+	position: relative;
+	top: 1px;
+}
+
+.myButton.active {
+	box-shadow: inset 0px 1px 0px 0px #caefab;
+	background: linear-gradient(to bottom, #77d42a 5%, #5cb811 100%);
+	background-color: #77d42a;
+	border-radius: 6px;
+	border: 1px solid #268a16;
+	display: inline-block;
+	cursor: pointer;
+	color: #000000;
+	font-family: Arial;
+	font-size: 15px;
+	font-weight: bold;
+	padding: 10px 24px;
+	text-decoration: none;
+	text-shadow: 0px 1px 0px #aade7c;
+}
+
+.myButton.active:hover {
+	background: linear-gradient(to bottom, #5cb811 5%, #77d42a 100%);
+	background-color: #5cb811;
+}
+
+.myButton.active:active {
+	position: relative;
+	top: 1px;
+}
+
+.myButton1 {
+	box-shadow: inset 0px 1px 0px 0px #ffffff;
+	background: linear-gradient(to bottom, #ededed 5%, #dfdfdf 100%);
+	background-color: #ededed;
+	border-radius: 6px;
+	border: 1px solid #dcdcdc;
+	display: inline-block;
+	cursor: pointer;
+	color: #777777;
+	font-family: Arial;
+	font-size: 15px;
+	font-weight: bold;
+	padding: 10px 24px;
+	text-decoration: none;
+	text-shadow: 0px 1px 0px #ffffff;
+	margin: 15px auto;
+}
+
+.myButton1:hover {
+	background: linear-gradient(to bottom, #dfdfdf 5%, #ededed 100%);
+	background-color: #dfdfdf;
+}
+
+.myButton1:active {
+	position: relative;
+	top: 1px;
+}
+
+.myButton1.active {
+	box-shadow: inset 0px 1px 0px 0px #caefab;
+	background: linear-gradient(to bottom, #77d42a 5%, #5cb811 100%);
+	background-color: #77d42a;
+	border-radius: 6px;
+	border: 1px solid #268a16;
+	display: inline-block;
+	cursor: pointer;
+	color: #000000;
+	font-family: Arial;
+	font-size: 15px;
+	font-weight: bold;
+	padding: 10px 24px;
+	text-decoration: none;
+	text-shadow: 0px 1px 0px #aade7c;
+}
+
+.myButton1.active:hover {
+	background: linear-gradient(to bottom, #5cb811 5%, #77d42a 100%);
+	background-color: #5cb811;
+}
+
+.myButton1.active:active {
+	position: relative;
+	top: 1px;
+}
+
+#msgbox {
+	animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+	50% {
+		opacity: 0;
+	}
+}
+
+#popup {
+	display: none;
+	position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 10px solid #110d03;
+    background-color: olivedrab;
+    background: #fff;
+    width: 40%;
+    height: 60%;
+    text-align: center;
+    box-shadow: 0 0 5px 5px #000;
+}
+
+#popup h2 {
+	margin-bottom: 45px;
+	color: #096969;
+}
+
+.myButton2 {
+	box-shadow:inset 0px 1px 0px 0px #f9eca0;
+	background:linear-gradient(to bottom, #f0c911 5%, #f2ab1e 100%);
+	background-color:#f0c911;
+	border-radius:6px;
+	border:1px solid #e65f44;
+	display:inline-block;
+	cursor:pointer;
+	color:#3b0b02;
+	font-family:Arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:10px 24px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #ded17c;
+	margin-top: 45px;
+}
+.myButton2:hover {
+	background:linear-gradient(to bottom, #f2ab1e 5%, #f0c911 100%);
+	background-color:#f2ab1e;
+}
+.myButton2:active {
+	position:relative;
+	top:1px;
+}

@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<!------------
+Author: Satyanarayan Mishra
+email: satya4satyanm@gmail.com
+Dice works on phaser quads : http://jsfiddle.net/satya4satyanm/chb7v4d6/2/
+Phaser 3 3D Dice
+---------------------->
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Phaser Sandbox Frame</title>
+	<style type="text/css">
+		body {
+			margin: 0;
+			padding: 0;
+			background-color: #000;
+			overflow: hidden;
+			text-align: center;
+		}
+	</style>
+	<script type="text/javascript" src="3.17.0.js"></script>
+</head>
+
+<body>
+	<div id="phaser-example" style="overflow: hidden;"></div>
+	<script type="text/javascript">
+		var game, bgContainer, tilesContainer;
+		window.onload = function () {
+			var config = {
+				type: Phaser.WEBGL,
+				width: 540,
+				height: 754,
+				autoResize: true,
+				parent: 'phaser-example',
+				fps: 120,
+				scene: {
+					preload: preload,
+					create: create,
+					update: update
+				}
+			};
+
+			game = new Phaser.Game(config);
+			resize();
+
+
+
+			window.addEventListener("resize", resize, false);
+		}
+		function resize() {
+			var canvas = document.querySelector("canvas");
+			var windowWidth = window.innerWidth;
+			var windowHeight = window.innerHeight;
+			var windowRatio = windowWidth / windowHeight;
+			var gameRatio = game.config.width / game.config.height;
+			if (windowRatio < gameRatio) {
+				canvas.style.width = windowWidth + "px";
+				canvas.style.height = (windowWidth / gameRatio) + "px";
+			}
+			else {
+				canvas.style.width = (windowHeight * gameRatio) + "px";
+				canvas.style.height = windowHeight + "px";
+			}
+		}
+
+		var model;
+		var highLow = null;
+		var timeline = null;
+		var currentTurn = "Player";
+		var lemming = null;
+		var movesDone = true;
+		var playingMusic = false;
+
+		// Dice class start
+		function Dice(quads, x, y, points, rotEnabled) {
+			this.x = x;
+			this.y = y;
+			this.rotEnabled = rotEnabled;
+			this.stopped = true;
+			this.animationCompleted = false;
+			this.points = points;
+			this.points2d = [];
+			for (var i = 0; i < this.points.length; i++) {
+				this.points2d[i] = { x: 0, y: 0, z: 0 };
+			}
+			this.rotations = { x: 0, y: 0, z: 0 }; // initial rotation of the dices
+			this.finalRot = { x: 0, y: 0, z: 0 };
+			this.quad1 = me.add.quad(40, 40, quads, 0);
+			this.quad2 = me.add.quad(40, 40, quads, 4);
+			this.quad3 = me.add.quad(40, 40, quads, 5);
+			this.quad4 = me.add.quad(40, 40, quads, 1);
+			this.quad5 = me.add.quad(40, 40, quads, 2);
+			this.quad6 = me.add.quad(40, 40, quads, 3);
+			this.lastTime = new Date().getTime();
+			this.draw2d = function () {
+				var diceX = this.x;
+				var diceY = this.y;
+				this.quad1.setTopLeft(this.points2d[model["quads"][0][0]].x + diceX, this.points2d[model["quads"][0][0]].y + diceY);
+				this.quad1.setTopRight(this.points2d[model["quads"][0][1]].x + diceX, this.points2d[model["quads"][0][1]].y + diceY);
+				this.quad1.setBottomLeft(this.points2d[model["quads"][0][2]].x + diceX, this.points2d[model["quads"][0][2]].y + diceY);
+				this.quad1.setBottomRight(this.points2d[model["quads"][0][3]].x + diceX, this.points2d[model["quads"][0][3]].y + diceY);
+				this.quad1.depth = this.points2d[model["quads"][0][0]].z + this.points2d[model["quads"][0][1]].z +
+					this.points2d[model["quads"][0][2]].z + this.points2d[model["quads"][0][3]].z;
+
+				this.quad2.setTopLeft(this.points2d[model["quads"][1][0]].x + diceX, this.points2d[model["quads"][1][0]].y + diceY);
+				this.quad2.setTopRight(this.points2d[model["quads"][1][1]].x + diceX, this.points2d[model["quads"][1][1]].y + diceY);
+				this.quad2.setBottomLeft(this.points2d[model["quads"][1][2]].x + diceX, this.points2d[model["quads"][1][2]].y + diceY);
+				this.quad2.setBottomRight(this.points2d[model["quads"][1][3]].x + diceX, this.points2d[model["quads"][1][3]].y + diceY);
+				this.quad2.depth = this.points2d[model["quads"][1][0]].z + this.points2d[model["quads"][1][1]].z +
+					this.points2d[model["quads"][1][2]].z + this.points2d[model["quads"][1][3]].z;
+
+				this.quad3.setTopLeft(this.points2d[model["quads"][2][0]].x + diceX, this.points2d[model["quads"][2][0]].y + diceY);
+				this.quad3.setTopRight(this.points2d[model["quads"][2][1]].x + diceX, this.points2d[model["quads"][2][1]].y + diceY);
+				this.quad3.setBottomLeft(this.points2d[model["quads"][2][2]].x + diceX, this.points2d[model["quads"][2][2]].y + diceY);
+				this.quad3.setBottomRight(this.points2d[model["quads"][2][3]].x + diceX, this.points2d[model["quads"][2][3]].y + diceY);
+				this.quad3.depth = this.points2d[model["quads"][2][0]].z + this.points2d[model["quads"][2][1]].z +
+					this.points2d[model["quads"][2][2]].z + this.points2d[model["quads"][2][3]].z;
+
+				this.quad4.setTopLeft(this.points2d[model["quads"][3][0]].x + diceX, this.points2d[model["quads"][3][0]].y + diceY);
+				this.quad4.setTopRight(this.points2d[model["quads"][3][1]].x + diceX, this.points2d[model["quads"][3][1]].y + diceY);
+				this.quad4.setBottomLeft(this.points2d[model["quads"][3][2]].x + diceX, this.points2d[model["quads"][3][2]].y + diceY);
+				this.quad4.setBottomRight(this.points2d[model["quads"][3][3]].x + diceX, this.points2d[model["quads"][3][3]].y + diceY);
+				this.quad4.depth = this.points2d[model["quads"][3][0]].z + this.points2d[model["quads"][3][1]].z +
+					this.points2d[model["quads"][3][2]].z + this.points2d[model["quads"][3][3]].z;
+
+				this.quad5.setTopLeft(this.points2d[model["quads"][4][0]].x + diceX, this.points2d[model["quads"][4][0]].y + diceY);
+				this.quad5.setTopRight(this.points2d[model["quads"][4][1]].x + diceX, this.points2d[model["quads"][4][1]].y + diceY);
+				this.quad5.setBottomLeft(this.points2d[model["quads"][4][2]].x + diceX, this.points2d[model["quads"][4][2]].y + diceY);
+				this.quad5.setBottomRight(this.points2d[model["quads"][4][3]].x + diceX, this.points2d[model["quads"][4][3]].y + diceY);
+				this.quad5.depth = this.points2d[model["quads"][4][0]].z + this.points2d[model["quads"][4][1]].z +
+					this.points2d[model["quads"][4][2]].z + this.points2d[model["quads"][4][3]].z;
+
+				this.quad6.setTopLeft(this.points2d[model["quads"][5][0]].x + diceX, this.points2d[model["quads"][5][0]].y + diceY);
+				this.quad6.setTopRight(this.points2d[model["quads"][5][1]].x + diceX, this.points2d[model["quads"][5][1]].y + diceY);
+				this.quad6.setBottomLeft(this.points2d[model["quads"][5][2]].x + diceX, this.points2d[model["quads"][5][2]].y + diceY);
+				this.quad6.setBottomRight(this.points2d[model["quads"][5][3]].x + diceX, this.points2d[model["quads"][5][3]].y + diceY);
+				this.quad6.depth = this.points2d[model["quads"][5][0]].z + this.points2d[model["quads"][5][1]].z +
+					this.points2d[model["quads"][5][2]].z + this.points2d[model["quads"][5][3]].z;
+			}
+
+			this.rotateX3DTo = function (theta) { // radians
+				var ts = Math.sin(theta);
+				var tc = Math.cos(theta);
+				for (var n = 0; n < model.verts.length; n++) {
+					var vert = model.verts[n];
+					var staticVerts = model.staticVerts[n];
+					var y = staticVerts.y;
+					var z = staticVerts.z;
+
+					vert.y = y * tc - z * ts;
+					vert.z = z * tc + y * ts;
+				}
+			}
+
+			this.rotateY3DTo = function (theta) {
+				var ts = Math.sin(theta);
+				var tc = Math.cos(theta);
+				for (var n = 0; n < model.verts.length; n++) {
+					var vert = model.verts[n];
+					var staticVerts = model.staticVerts[n];
+					var x = staticVerts.x;
+					var z = staticVerts.z;
+
+					vert.x = x * tc - z * ts;
+					vert.z = z * tc + x * ts;
+				}
+			}
+
+			this.rotateZ3DTo = function (theta) {
+				var ts = Math.sin(theta);
+				var tc = Math.cos(theta);
+				for (var n = 0; n < model.verts.length; n++) {
+					var vert = model.verts[n];
+					var staticVerts = model.staticVerts[n];
+					//var x = vert.x;
+					var x = staticVerts.x;
+					var y = staticVerts.y;
+
+					vert.x = x * tc - y * ts;
+					vert.y = y * tc + x * ts;
+				}
+			}
+
+			this.animate = function () {
+				var t = this;
+				var time = new Date().getTime();
+				var diffTime = (time - t.lastTime) * 0.001;
+				if (diffTime > 0.1) diffTime = 0.1;
+
+				var rotIncrement = 6;
+				if (Math.abs(Math.ceil(t.finalRot.x * 100) - Math.ceil(t.rotations.x * 100)) > rotIncrement + 1) {
+					t.rotations.x += diffTime * rotIncrement;
+					t.stopped = false;
+				} else {
+					t.rotations.x = t.finalRot.x;
+					t.stopped = true;
+				}
+
+				if (Math.abs(Math.ceil(t.finalRot.y * 100) - Math.ceil(t.rotations.y * 100)) > rotIncrement + 1) {
+					t.rotations.y += diffTime * rotIncrement;
+				} else {
+					t.rotations.y = t.finalRot.y;
+				}
+
+				if (Math.abs(Math.ceil(t.finalRot.z * 100) - Math.ceil(t.rotations.z * 100)) > rotIncrement + 1) {
+					t.rotations.z += diffTime * rotIncrement;
+				} else {
+					t.rotations.z = t.finalRot.z;
+				}
+
+				if (t.finalRot.x == t.rotations.x && t.finalRot.y == t.rotations.y && t.finalRot.z == t.rotations.z) {
+					// satya add movements from here
+					t.rotEnabled = false;
+					t.animationCompleted = true;
+				}
+				t.lastTime = time;
+				t.updateFrameFunc();
+			}
+
+			this.updateFrameFunc = function () {
+				var t = this;
+				var sin = Math.sin;
+				var cos = Math.cos;
+				var points2d = t.points2d;
+
+				var x, y, z, xy, xz, yx, yz, zx, zy;
+				var sx = sin(t.rotations.x);
+				var cx = cos(t.rotations.x);
+				var sy = sin(t.rotations.y);
+				var cy = cos(t.rotations.y);
+				var sz = sin(t.rotations.z);
+				var cz = cos(t.rotations.z);
+
+				for (var i = 0; i < t.points.length; i++) {
+					x = t.points[i].x;
+					y = t.points[i].y;
+					z = t.points[i].z;
+					xy = cx * y - sx * z;
+					xz = sx * y + cx * z;
+					yz = cy * xz - sy * x;
+					yx = sy * xz + cy * x;
+					zx = cz * yx - sz * xy;
+					zy = sz * yx + cz * xy;
+					points2d[i].x = zx;
+					points2d[i].y = zy;
+					points2d[i].z = yz;
+				}
+				t.draw2d();
+			}
+		}
+		// Dice class end
+
+
+		function preload() {
+			this.load.image('bg', 'bg.png');
+			this.load.image('bg1', 'bgs/1.jpg');
+			this.load.image('bg2', 'bgs/2.jpg');
+			this.load.image('bg3', 'bgs/3.jpg');
+			this.load.image('bg4', 'bgs/4.jpg');
+			this.load.image('bg5', 'bgs/5.jpg');
+			this.load.image('bg6', 'bgs/6.jpg');
+			this.load.image('bg7', 'bgs/7.jpg');
+			this.load.image('bg8', 'bgs/8.jpg');
+			this.load.image('bg9', 'bgs/9.jpg');
+			this.load.image('bg10', 'bgs/10.jpg');
+			this.load.image('nb', 'next-level-btn.png');
+			this.load.image('trans', 'trans.png');
+			this.load.image('lightGoldTile', 'lightGoldTile.png');
+			this.load.image('blueTile', 'blueTile.png');
+			this.load.image('brightGoldTile', 'brightGoldTile.png');
+			this.load.image('goldTile', 'goldTile.png');
+			this.load.image('header', 'header.png');
+			this.load.image('footer', 'footer.png');
+			this.load.image('tile', 'tile.png');
+			this.load.image('ladder', 'ladder.png');
+			this.load.image('rollerCoaster', 'rollerCoaster.png');
+			this.load.spritesheet('d1', 'd1.png', { frameWidth: 80, frameHeight: 80 });
+			this.load.spritesheet('d2', 'd2.png', { frameWidth: 88, frameHeight: 88 });
+			this.load.spritesheet('pawn', 'pawn.png', { frameWidth: 60, frameHeight: 80 });
+			this.load.spritesheet('robo', 'robo.png', { frameWidth: 67, frameHeight: 103 });
+			this.load.spritesheet('rollerCoasterCar', 'rollerCoasterCar.png', { frameWidth: 169, frameHeight: 250 });
+			this.load.image('roll', 'roll.png');
+			this.load.image('spark', 'blue.png');
+			this.load.image('fire', 'yellow.png');
+			this.load.image('fireBall', 'fire.png');
+			this.load.image('tbg', 'popup.png');
+			this.load.image('sparkle1', 'sparkle1.png');
+			this.load.image('cross', 'cross.png');
+			this.load.image('power', 'power.png');
+			this.load.image('love', 'love.png');
+			this.load.image('plus', 'plus.png');
+			this.load.image('btn', 'btn.png');
+			this.load.image('speaker1', 'speaker1.png');
+			this.load.image('speaker2', 'speaker2.png');
+			this.load.image('gear', 'gear.png');
+			this.load.audio('theme', ['music.mp3']);
+			this.load.audio('rolling', ['rolling.wav']);
+			this.load.audio('win', ['win.wav']);
+			this.load.audio('fire', ['fire.wav']);
+		}
+
+		function create() {
+			me = this;
+			var music = this.sound.add('theme');
+			me.currentLevel = 0;
+			// Tiles position
+			var positionsInit = [
+				{ "x": 128, "y": 469 },
+				{ x: 200, y: 496 },
+				{ x: 276, y: 484 },
+				{ x: 338, y: 457 },
+				{ x: 405, y: 417 },
+				{ x: 380, y: 367 },
+				{ x: 307, y: 370 },
+				{ x: 238, y: 394 },
+				{ x: 168, y: 373 },
+				{ x: 107, y: 333 },
+				{ x: 144, y: 286 },
+				{ x: 216, y: 312 },
+				{ x: 289, y: 309 },
+				{ x: 354, y: 287 },
+				{ x: 424, y: 261 },
+				{ x: 417, y: 209 },
+				{ x: 337, y: 193 },
+				{ x: 269, y: 212 },
+				{ x: 197, y: 192 },
+				{ x: 120, y: 198 },
+				{ x: 109, y: 139 },
+				{ x: 180, y: 117 },
+				{ x: 257, y: 113 },
+				{ x: 333, y: 127 },
+				{ x: 405, y: 111 }
+			];
+			// Levels definition
+			me.levels = [{
+				"name": "Boddington Mines Australia",
+				"theme": "Dry black mountains",
+				"positions": positionsInit
+			},
+			{
+				"name": "Veladero Mines Argentina",
+				"theme": "Orange soil and snow fall",
+				"positions": positionsInit,
+				"ladder": [{ s: 11, e: 18 }]
+			},
+			{
+				"name": "Olimpiada Mines Russia",
+				"theme": "Iceberg mountains",
+				"positions": positionsInit,
+				"ladder": [{ s: 11, e: 18 }],
+				"rollerCoaster": [{ s: 14, e: 3 }]
+			},
+			{
+				"name": "Goldstrike Mines USA",
+				"theme": "White and blue stones",
+				"positions": positionsInit,
+				"ladder": [{ s: 11, e: 18 }],
+				"rollerCoaster": [{ s: 14, e: 3 }],
+				"fire": 12
+			},
+			{
+				"name": "Cortez Mines USA",
+				"theme": "Yellow sand hills",
+				"positions": positionsInit,
+				"ladder": [{ s: 11, e: 18 }],
+				"rollerCoaster": [{ s: 14, e: 3 }],
+				"fire": 12,
+				"ice": 17
+			},
+			{
+				"name": "Carlin Trend Mines USA",
+				"theme": "Red soils desert",
+				"positions": positionsInit,
+				"ladder": [{ s: 11, e: 18 }],
+				"rollerCoaster": [{ s: 14, e: 3 }],
+				"fire": 12,
+				"ice": 17,
+				"power": 8
+			},
+			{
+				"name": "Yanacocha Mines Peru",
+				"theme": "Golden sand rocks",
+				"positions": positionsInit,
+				"ladder": [{ s: 11, e: 18 }],
+				"rollerCoaster": [{ s: 14, e: 3 }],
+				"fire": 12,
+				"ice": 17,
+				"power": 8,
+				"love": 13
+			},
+			{
+				"name": "Pueblo Viejo Mines Dominic",
+				"theme": "Jungle",
+				"positions": positionsInit,
+				"ladder": [{ s: 11, e: 18 }],
+				"rollerCoaster": [{ s: 14, e: 3 }],
+				"fire": 12,
+				"ice": 17,
+				"power": 8,
+				"love": 13,
+				"plus": 15
+			},
+			{
+				"name": "Grasberg Mines Indonesia",
+				"theme": "Hill stations",
+				"positions": positionsInit
+			}//,
+				// {
+				// 	"name": "Muruntau Mines Uzbekistan",
+				// 	"theme": "Desert"
+				// }
+			];
+
+			me.levelSelector = me.levels[me.currentLevel];
+			me.positions = me.levelSelector.positions;
+			var diceSize = 26;
+			model = {
+				"staticVerts": [
+					{ x: -diceSize, y: -diceSize, z: diceSize }, { x: diceSize, y: -diceSize, z: diceSize }, { x: diceSize, y: diceSize, z: diceSize },
+					{ x: -diceSize, y: diceSize, z: diceSize }, { x: -diceSize, y: -diceSize, z: -diceSize }, { x: diceSize, y: -diceSize, z: -diceSize },
+					{ x: diceSize, y: diceSize, z: -diceSize }, { x: -diceSize, y: diceSize, z: -diceSize }
+				],
+				"verts": [
+					{ x: -diceSize, y: -diceSize, z: diceSize }, { x: diceSize, y: -diceSize, z: diceSize }, { x: diceSize, y: diceSize, z: diceSize },
+					{ x: -diceSize, y: diceSize, z: diceSize }, { x: -diceSize, y: -diceSize, z: -diceSize }, { x: diceSize, y: -diceSize, z: -diceSize },
+					{ x: diceSize, y: diceSize, z: -diceSize }, { x: -diceSize, y: diceSize, z: -diceSize }
+				]
+				, "quads": [[0, 1, 3, 2], [4, 0, 7, 3], [5, 4, 6, 7], [1, 5, 2, 6], [3, 2, 7, 6], [4, 5, 0, 1]]
+			};
+			dices = [];
+
+			bgContainer = this.add.container(0, 0);
+
+			bgContainer.add(this.add.image(0, 0, 'bg1').setOrigin(0, 0).setScale(1.5));
+
+			var transparent = this.add.image(0, 0, 'trans').setOrigin(0, 0);
+			transparent.setPosition(20, 80)
+			transparent.setAlpha(0.5)
+			transparent.displayWidth = 500
+			transparent.displayHeight = 600
+
+			tilesContainer = this.add.container(0, 0);
+			createTiles();
+
+			//this.add.image(0,130,'leftPanel').setOrigin(0,0);
+			this.add.image(60, 672, 'pawn').setScale(0.57);
+			this.add.image(480, 670, 'robo').setScale(0.52);
+			this.add.image(0, 0, 'header').setOrigin(0, 0);
+			this.add.image(0, 700, 'footer').setOrigin(0, 0);
+
+			//this.add.image(5,380,'btn').setOrigin(0,0);
+			this.add.image(5, 440, 'speaker1').setOrigin(0, 0);
+			var toogleMusic = this.add.image(5, 440, 'speaker2').setOrigin(0, 0).setAlpha(0.01);
+			toogleMusic.setInteractive();
+			var configBtn = this.add.image(5, 500, 'gear').setOrigin(0, 0);
+
+			d1 = new Dice('d1', 150, 650, model.verts, false);
+			dices.push(d1);
+			d1.animate();
+
+			d2 = new Dice('d2', 400, 650, model.verts, false);
+			dices.push(d2);
+			d2.animate();
+
+			var textConfig = {
+				fontFamily: 'Arial Black',
+				fontSize: '28px',
+				color: 'black', fontWeight: 'bold'
+			}
+
+			me.roll = this.add.image(270, 650, 'roll');
+
+			//  Make them all input enabled
+			me.roll.setInteractive();
+
+			me.roll.on('clicked', startRoll, this);
+			this.input.addPointer();
+			var map = [];
+			this.input.on('pointerdown', function (pointer) {
+				map.push({ x: Math.round(pointer.x), y: Math.round(pointer.y) });
+				if (!playingMusic) {
+					music.play();
+					playingMusic = true;
+				}
+			}, this);
+
+			this.nameTxt = this.add.text(270, 570, me.levelSelector["name"], {
+				fontFamily: 'Arial',
+				fontSize: '16px',
+				backgroundColor: 'black', padding: 5,
+				color: 'white'
+			}).setOrigin(0.5, 0.5);
+
+			music.on('complete', function () {
+				playingMusic = false;
+			});
+
+			this.input.on('gameobjectup', function (pointer, gameObject) {
+				gameObject.emit('clicked', gameObject);
+			}, this);
+
+			this.lastTime = new Date().getTime();
+
+			toogleMusic.on('clicked', function (btn) {
+				if (btn.alpha == 1) {
+					btn.setAlpha(0.01);
+					music.play();
+				} else {
+					btn.setAlpha(1);
+					music.stop();
+				}
+			}, this);
+
+			me.dynamicTiles = me.add.container(0, 0);
+
+			me.players = me.add.container(0, 0);
+
+			me.pawn = this.add.image(-150, 300, 'pawn').setOrigin(0.5, 1);
+			me.pawn.setScale(0.8);
+			me.pawn.currentPos = 0;
+			me.pawn.canMove = true;
+
+			me.robo = this.add.image(-150, 300, 'robo').setOrigin(0.5, 1);
+			me.robo.setScale(0.64);
+			me.robo.currentPos = 0;
+			me.robo.canMove = true;
+
+			me.players.add(me.pawn);
+			me.players.add(me.robo);
+
+			this.tweens.add({
+				targets: me.roll,
+				duration: 300,
+				delay: 200,
+				scaleX: 0.9,
+				scaleY: 0.9,
+				ease: 'Sine.easeInOut',
+				repeat: -1,
+				yoyo: true
+			});
+
+			this.tweens.add({
+				targets: me.robo,
+				duration: 600,
+				delay: 200,
+				scaleX: 0.8,
+				scaleY: 0.8,
+				ease: 'Sine.easeInOut',
+				repeat: -1,
+				yoyo: true
+			});
+
+			this.tweens.add({
+				targets: me.pawn,
+				duration: 600,
+				delay: 200,
+				scaleX: 0.9,
+				scaleY: 0.9,
+				ease: 'Sine.easeInOut',
+				repeat: -1,
+				yoyo: true
+			});
+
+			var points = [
+				437, 267,
+				412, 297,
+				409, 331,
+				432, 359,
+				463, 359,
+				481, 338,
+				460, 317,
+				435, 335,
+				439, 373,
+				460, 394,
+				481, 416,
+				478, 452,
+				450, 474,
+				409, 475,
+				355, 465
+			];
+
+			me.curve = new Phaser.Curves.Spline(points);
+
+			me.six = me.add.container(0, 0);
+			var sparkle1 = me.add.image(270, 280, 'sparkle1');
+			me.six.add(sparkle1);
+
+			var textConfig = {
+				fontFamily: 'Arial Black',
+				fontSize: '120px',
+				color: 'black', fontWeight: 'bold'
+			}
+
+			var txt6 = me.add.text(270, 280, '6', textConfig).setOrigin(0.5, 0.5);
+			txt6.setStroke('#faac1b', 7);
+			txt6.setShadow(2, 2, '#ffffff', 1, true, false);
+			me.six.add(txt6);
+			me.six.visible = false;
+
+
+
+			me.popup = me.add.container(0, 0);
+
+			var tbg = me.add.image(0, 0, 'tbg').setOrigin(0, 0);
+
+			var hitArea = new Phaser.Geom.Rectangle(0, 0, 600, 800);
+
+			tbg.setInteractive();
+
+			var close = me.add.image(420, 160, 'cross').setScale(0.1);
+			close.on('clicked', closePopup, me);
+			close.setInteractive();
+
+			me.popup.add(tbg);
+			var tConfig = {
+				fontFamily: 'Arial Black',
+				fontSize: '22px',
+				color: 'white', fontWeight: 'bold'
+			};
+			var text = me.add.text(240, 145, "Levels", tConfig);
+			me.popup.add(text);
+			me.popup.add(close);
+			me.popup.visible = false;
+
+			for (var i = 0; i < 3; i++) {
+				for (var j = 0; j < 3; j++) {
+					me.popup.add(me.add.image(195 + 80 * j, 225 + 90 * i, 'btn'));
+					levelWonPositions.push({ x: 195 + 80 * j, y: 225 + 90 * i });
+				}
+			}
+
+			tConfig = {
+				fontFamily: 'Arial',
+				fontSize: '16px',
+				color: 'white', fontWeight: 'bold'
+			};
+			me.popup.add(me.add.text(165, 520, "Close this to stay in same level.", tConfig));
+
+			var nextLevelBtn = me.add.image(275, 475, 'nb');
+			nextLevelBtn.on('clicked', startNextLevel, me);
+			nextLevelBtn.setInteractive();
+			me.popup.add(nextLevelBtn);
+
+			configBtn.setInteractive();
+			configBtn.on('clicked', function () {
+				me.popup.visible = true;
+
+			}, me);
+
+			nextLevel(true);
+		}
+
+		function clearAllPow() {
+			if (me.power) me.power.destroy();
+			if (me.love) me.love.destroy();
+			if (me.plus) me.plus.destroy();
+			// if (me.fireTile) { tilesContainer.remove(me.fireTile, true); me.fireTile = false; }
+			// if (me.iceTile) { tilesContainer.remove(me.iceTile, true); me.iceTile = false; }
+
+			// if (me.ladder) { tilesContainer.remove(me.ladder, true); me.ladder = false; }
+
+			if (tilesContainer.list.length) {
+				// for(var i=0; i<tilesContainer.list.length; i++) {
+				// 	tilesContainer.removeAt(0, true);
+				// }
+				tilesContainer.removeAll();
+			}
+
+			// if (me.rc) me.rc.destroy();
+			// if (me.rcc) me.rcc.destroy();
+
+			if (me.p1) me.p1.destroy();
+			if (me.p2) me.p2.destroy();
+		}
+
+		function createTiles() {
+			for (var i = 0; i < me.positions.length; ++i) {
+				tilesContainer.add(me.add.image(me.positions[i].x, me.positions[i].y, 'tile'));
+			}
+
+			tilesContainer.add(me.add.image(me.positions[0].x, me.positions[0].y, 'brightGoldTile'));
+			me.add.text(100, 455, "Start", {
+				fontFamily: 'Arial Black',
+				fontSize: '20px',
+				color: 'black'
+			});
+
+			tilesContainer.add(me.add.image(365, 85, 'goldTile').setOrigin(0, 0));
+			me.add.text(378, 102, "Finish", {
+				fontFamily: 'Arial Black',
+				fontSize: '16px',
+				color: 'white'
+			});
+		}
+
+		function genEx() {
+			createTiles();
+
+			if (me.levelSelector['power'] !== undefined) {
+				me.power = true;
+				me.add.image(me.positions[me.levelSelector['power']].x, me.positions[me.levelSelector['power']].y, 'power');
+			} else {
+				me.power = false;
+			}
+			if (me.levelSelector['love'] !== undefined) {
+				me.love = true;
+				me.add.image(me.positions[me.levelSelector['love']].x, me.positions[me.levelSelector['love']].y, 'love');
+			} else {
+				me.love = false;
+			}
+			if (me.levelSelector['plus'] !== undefined) {
+				me.plus = true;
+				me.add.image(me.positions[me.levelSelector['plus']].x, me.positions[me.levelSelector['plus']].y, 'plus');
+			} else {
+				me.plus = false;
+			}
+			if (me.levelSelector["fire"] !== undefined) {
+				me.fireTile = true;
+				tilesContainer.add(me.add.image(me.positions[me.levelSelector["fire"]].x, me.positions[me.levelSelector["fire"]].y, 'lightGoldTile'));
+			} else {
+				me.fireTile = false;
+			}
+			if (me.levelSelector["ice"] !== undefined) {
+				me.iceTile = true;
+				tilesContainer.add(me.add.image(me.positions[me.levelSelector["ice"]].x, me.positions[me.levelSelector["ice"]].y, 'blueTile'));
+			} else {
+				me.iceTile = false;
+			}
+
+			if (me.levelSelector["ladder"] !== undefined) {
+				for (var i = 0; i < me.levelSelector["ladder"].length; ++i) {
+					var pos = me.levelSelector["ladder"][i].s;
+					tilesContainer.add(me.add.image(me.levelSelector["positions"][pos].x, me.levelSelector["positions"][pos].y, 'ladder').setOrigin(1, 1));
+				}
+				me.ladder = true;
+			} else {
+
+				me.ladder = false;
+			}
+
+			if (me.levelSelector["rollerCoaster"] !== undefined) {
+				for (var i = 0; i < me.levelSelector["rollerCoaster"].length; ++i) {
+					var pos = me.levelSelector["rollerCoaster"][i].s;
+					tilesContainer.add(me.add.image(me.levelSelector["positions"][pos].x, me.levelSelector["positions"][pos].y, 'rollerCoaster').setOrigin(0.52, 0.04));
+				}
+				me.rc = true;
+				me.rcc = tilesContainer.add(me.add.image(430, 285, 'rollerCoasterCar').setOrigin(0, 0).setScale(0.14));
+			} else {
+				me.rc = false;
+
+			}
+			var emitZone = {
+				source: new Phaser.Geom.Polygon([
+					231, 205,
+					254, 181,
+					298, 191,
+					310, 211,
+					298, 233,
+					245, 234
+				]),
+				type: 'edge',
+				quantity: 50
+			};
+			if (me.levelSelector["ice"] !== undefined) {
+				me.p1 = me.add.particles('spark');
+				me.emitter123 = me.p1.createEmitter({
+					x: me.positions[me.levelSelector["ice"]].x - 270,
+					y: me.positions[me.levelSelector["ice"]].y - 203,
+					blendMode: 'SCREEN',
+					angle: { min: 80, max: 180 },
+					scale: { start: 0.2, end: 0 },
+					speed: { min: -50, max: 50 },
+					quantity: 2
+				});
+				me.dynamicTiles.add(me.p1);
+				me.emitter123.setEmitZone(emitZone);
+			}
+
+			if (me.levelSelector["fire"] !== undefined) {
+				me.p2 = me.add.particles('fire');
+				me.emitter12 = me.p2.createEmitter({
+					x: me.positions[me.levelSelector["fire"]].x - 270,
+					y: me.positions[me.levelSelector["fire"]].y - 203,
+					blendMode: 'SCREEN',
+					angle: { min: 260, max: 280 },
+					scale: { start: 0.2, end: 0 },
+					speed: { min: -50, max: 50 },
+					quantity: 2
+				});
+				me.dynamicTiles.add(me.p2);
+				me.emitter12.setEmitZone(emitZone);
+
+			}
+		}
+
+		function closePopup() {
+			me.popup.visible = false;
+		}
+
+		function startNextLevel() {
+			closePopup();
+			nextLevel();
+		}
+
+		function onCompleteHandler(tween, targets, p) {
+			p.p.currentPos = p.p.currentPos + p.num;
+
+			if (p.p.currentPos == 12 && me.ladder) { //12
+				p.p.currentPos = 19;
+				moveToPoint(p.p, 18);
+			}
+
+			if (p.p.currentPos == 13 && me.fireTile) { //13
+				p.p.currentPos = 0;
+				p.p.setPosition(-150, 300);
+				particles = me.add.particles('fireBall');
+				particles.createEmitter({
+					alpha: { start: 1, end: 0 },
+					scale: { start: 0.15, end: 0.5 },
+					speed: 20,
+					accelerationY: -200,
+					angle: { min: -85, max: -95 },
+					rotate: { min: -180, max: 180 },
+					lifespan: { min: 1000, max: 1100 },
+					blendMode: 'ADD',
+					frequency: 110,
+					maxParticles: 10,
+					x: 305,
+					y: 295
+				});
+
+				me.sound.add('fire').play();
+			}
+
+
+			if (p.p.currentPos == 15 && me.rc) { //15
+				if (currentTurn == "Player") {
+					console.log("player went down.");
+					// run a player win animation
+					lemming = me.add.follower(me.curve, 437, 263, 'pawn');
+				} else {
+					console.log("Robo went down.");
+					// run a robo win animation
+					lemming = me.add.follower(me.curve, 437, 263, 'robo');
+				}
+				// move current player to new point
+				p.p.currentPos = 4;
+				p.p.visible = false;
+				moveToPoint(p.p, 3);
+
+				lemming.setScale(0.6);
+				lemming.startFollow({
+					duration: 800,
+					yoyo: false,
+					repeat: 0,
+					rotateToPath: false,
+					verticalAdjust: false,
+					onComplete: function () {
+						//alert("completed");
+						p.p.visible = true;
+						lemming.destroy();
+						lemming = null;
+					}
+				});
+			}
+			// check for positions of powers
+			if (p.p.currentPos == 18 && me.iceTile) {
+				p.p.canMove = false;
+				p.p.setAlpha(0.5);
+			}
+
+			if (p.p.currentPos == me.positions.length) {
+				me.sound.add('win').play();
+				me.popup.visible = true;
+				gameOver = true;
+				if (currentTurn == "Player") {
+					me.popup.add(me.add.image(levelWonPositions[me.currentLevel].x, levelWonPositions[me.currentLevel].y, 'pawn').setScale(0.57));
+				} else {
+					me.popup.add(me.add.image(levelWonPositions[me.currentLevel].x, levelWonPositions[me.currentLevel].y, 'robo').setScale(0.52));
+				}
+
+			}
+			movesDone = true;
+			if (currentTurn == "Player" && p.num != 6) {
+				currentTurn = "Robo";
+				if (p.p.currentPos != me.positions.length) {
+					me.roll.emit("clicked", me.roll);
+				}
+			} else if (currentTurn == "Player" && p.num == 6 && !gameOver) {
+				if (me.pawn.canMove) {
+					currentTurn = "Player";
+					me.roll.emit("clicked", me.roll);
+				} else {
+					currentTurn = "Robo";
+					me.roll.emit("clicked", me.roll);
+				}
+			} else if (currentTurn = "Robo" && p.num != 6) {
+				currentTurn = "Player";
+			} else if (currentTurn = "Robo" && p.num == 6 && !gameOver) {
+				if (me.robo.canMove) {
+					currentTurn = "Robo";
+					me.roll.emit("clicked", me.roll);
+				} else {
+					currentTurn = "Player";
+				}
+			}
+
+			if (p.p.currentPos == me.positions.length) {
+				currentTurn = 'Player';
+				dice = d1;
+			}
+		}
+
+		function moveToPoint(p, point) {
+			timeline = null;
+			timeline = me.tweens.createTimeline();
+			var config = {
+				targets: p,
+				x: me.positions[point].x,
+				y: me.positions[point].y,
+				ease: 'Power1',
+				duration: 200
+			};
+			timeline.add(config);
+			timeline.play();
+		}
+
+		function movePawn(p, positions, cb, num) {
+			if (p.canMove) {
+				timeline = null;
+				timeline = me.tweens.createTimeline();
+				if (num + p.currentPos - 1 < positions.length) {
+					for (var i = p.currentPos; i < num + p.currentPos; i++) {  //positions.length
+						var config = {
+							targets: p,
+							x: positions[i].x,
+							y: positions[i].y,
+							ease: 'Power1',
+							duration: 500
+						};
+
+						if (i == num + p.currentPos - 1) {
+							config.onComplete = cb;
+							config.onCompleteParams = [{ p: p, num: num }]
+						}
+						timeline.add(config);
+					}
+
+					timeline.play();
+				} else {
+					movesDone = true;
+					if (currentTurn == "Player") {
+						currentTurn = "Robo";
+						me.roll.emit("clicked", me.roll);
+					} else {
+						currentTurn = "Player"
+					}
+				}
+			} else {
+				movesDone = true;
+				if (currentTurn == "Player") {
+					currentTurn = "Robo";
+					me.roll.emit("clicked", me.roll);
+				} else {
+					currentTurn = "Player"
+				}
+			}
+		}
+
+		function startRoll(btn) {
+			if (dices[0].stopped && dices[1].stopped && movesDone) {
+				this.sound.add('rolling').play();
+				movesDone = false;
+				var angle = 0;
+				var t = this;
+				var one = { x: 0 + angle, y: 0 + angle, z: 0 + angle }; // 1
+				var two = { x: 0 + angle, y: 4.71238898038469 + angle, z: 0 + angle }; // 2
+				var three = { x: 1.5707963267948966 + angle, y: 0 + angle, z: 0 + angle }; // 3
+				var four = { x: 4.71238898038469 + angle, y: 0 + angle, z: 0 + angle }; // 4
+				var five = { x: 0 + angle, y: 1.5707963267948966 + angle, z: 0 + angle }; // 5
+				var six = { x: 0 + angle, y: 3.141592653589793 + angle, z: 0 + angle }; // 6
+				if (currentTurn == "Player") {
+					dice = d1;
+				} else if (currentTurn == "Robo") {
+					dice = d2;
+				}
+
+				var rand = Math.ceil(Math.random() * 6);
+				if (currentTurn == "Player") {
+					if (!me.robo.canMove && (me.positions.length - (me.pawn.currentPos + totalMoves)) > 6) {
+						rand = 6;
+					} else if (!me.robo.canMove && (me.positions.length - (me.pawn.currentPos + totalMoves)) < 6) {
+						rand = me.positions.length - (me.pawn.currentPos + totalMoves);
+					}
+				} else {
+					if (!me.pawn.canMove && (me.positions.length - (me.robo.currentPos + totalMoves)) > 6) {
+						rand = 6;
+					} else if (!me.pawn.canMove && (me.positions.length - (me.robo.currentPos + totalMoves)) < 6) {
+						rand = me.positions.length - (me.robo.currentPos + totalMoves);
+					}
+				}
+
+				dice.rand = rand;
+				if (rand == 1) {
+					dice.finalRot = one;
+				}
+				if (rand == 2) {
+					dice.finalRot = two;
+				}
+				if (rand == 3) {
+					dice.finalRot = three;
+				}
+				if (rand == 4) {
+					dice.finalRot = four;
+				}
+				if (rand == 5) {
+					dice.finalRot = five;
+				}
+				if (rand == 6) {
+					dice.finalRot = six;
+				}
+				dice.rotations = { x: dice.finalRot.x - 20, y: dice.finalRot.y - 20, z: dice.finalRot.z - 20 };
+				dice.rotEnabled = true;
+			}
+		}
+
+		function hitTest(object1, object2) {
+			var left1 = parseInt(object1.x);
+			var left2 = parseInt(object2.x);
+			var top1 = parseInt(object1.y);
+			var top2 = parseInt(object2.y);
+			var width1 = parseInt(object1.displayWidth);
+			var width2 = parseInt(object2.displayWidth);
+			var height1 = parseInt(object1.displayHeight);
+			var height2 = parseInt(object2.displayHeight);
+			var horTest = false;
+			var verTest = false;
+			if (((left1 >= left2) && (left1 <= left2 + width2)) || ((left2 >= left1) && (left2 <= left1 + width1))) { horTest = true; } if (((top1 >= top2) && (top1 <= top2 + height2)) || ((top2 >= top1) && (top2 <= top1 + height1))) {
+				verTest = true;
+			}
+			if (horTest && verTest) {
+				return true;
+			}
+			return false;
+		}
+
+		var currentPlayer;
+		var totalMoves = 0;
+		var gameOver = false;
+		var levelWonPositions = [];
+		function update() {
+			me.children.bringToTop(me.popup);
+			if (!gameOver) {
+				for (var i = 0; i < dices.length; i++) {
+					var d = dices[i];
+					if (d.rotEnabled) {
+						d.animate();
+					}
+
+					if (d.animationCompleted) {
+						if (d.rand == 6 && (currentPlayer.currentPos + 6) == 25) {
+							totalMoves += d.rand;
+							(currentTurn == "Player") ? currentPlayer = me.pawn : currentPlayer = me.robo;
+							movePawn(currentPlayer, me.positions, onCompleteHandler, totalMoves ? totalMoves : -1);
+							d.animationCompleted = false;
+							totalMoves = 0;
+						}
+						else if (d.rand == 6) {
+							totalMoves += 6;
+							me.six.visible = true;
+							movesDone = true;
+							me.roll.emit("clicked", me.roll);
+							d.animationCompleted = false;
+						} else {
+							me.six.visible = false;
+							totalMoves += d.rand;
+							(currentTurn == "Player") ? currentPlayer = me.pawn : currentPlayer = me.robo;
+							movePawn(currentPlayer, me.positions, onCompleteHandler, totalMoves ? totalMoves : -1);
+							d.animationCompleted = false;
+							totalMoves = 0;
+						}
+					}
+				}
+				if (me.power != null && hitTest(currentPlayer, me.power)) {
+					console.log('player got the power');
+					me.power.destroy();
+					me.power = null;
+				}
+
+				if (me.love != null && hitTest(currentPlayer, me.love)) {
+					console.log('player got the extra life');
+					me.love.destroy();
+					me.love = null;
+				}
+
+				if (me.plus != null && hitTest(currentPlayer, me.plus)) {
+					console.log('player got the plus');
+					me.plus.destroy();
+					me.plus = null;
+				}
+			}
+		}
+
+		function nextLevel(zero) {
+			gameOver = false;
+			if (!zero) me.currentLevel++;
+			if (me.currentLevel == me.levels.length - 1) me.currentLevel = 0;
+			me.levelSelector = me.levels[me.currentLevel];
+			bgContainer.add(me.add.image(0, 0, 'bg' + (me.currentLevel + 1)).setScale(1.5).setOrigin(0, 0));
+
+			me.nameTxt.text = me.levels[me.currentLevel].name;
+			clearAllPow();
+			genEx();
+
+			me.pawn.setPosition(-150, 300);
+			me.robo.setPosition(-150, 300);
+			me.pawn.currentPos = 0;
+			me.pawn.canMove = true;
+
+			me.robo.currentPos = 0;
+			me.robo.canMove = true;
+
+			me.pawn.setAlpha(1);
+			me.robo.setAlpha(1);
+
+			currentTurn = "Player";
+		}
+
+	</script>
+</body>
+
+</html>

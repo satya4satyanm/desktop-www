@@ -1,0 +1,44 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style type = "text/css">
+            body{
+                display: flex;
+                background: url('1.png') repeat;
+                padding: 0px;
+                margin: 0px;
+            }
+            #thegame {
+                position: relative;
+                width: 350px;
+                height: 100%;
+                margin: 0 auto;
+                /* box-shadow: 0px 30px 15px #000000; */
+            }
+
+            @media only screen and (min-width: 768px) and (orientation: landscape) {
+                #thegame {
+                    width: 440px;
+                }
+            }
+
+            @media only screen and (min-width: 768px) and (orientation: portrait) {
+                #thegame {
+                    width: 600px;
+                }
+            }
+
+            canvas {
+                margin: 0;
+                object-fit: fill;
+            }
+        </style>
+        <script src = "phaser.js"></script>
+    </head>
+	<body>
+        <div id = "thegame"></div>
+        <script src = "game.js"></script>
+	</body>
+</html>
